@@ -17,7 +17,7 @@ services:
     environment:
       APPNAME: Admin
       APPURL: http://app/
-      APPURLREGEX: http://app/.*
+      APPURLREGEX: ^http://app/.*$
       APPFLAG: dev{flag}
       APPLIMIT: 2
       APPLIMITTIME: 60
