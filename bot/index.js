@@ -8,7 +8,9 @@ const rateLimit = require("express-rate-limit")
 app.use(express.urlencoded({ extended: false }))
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.set('trust proxy', () => true)
+if (process.env.USE_PROXY){
+    app.set('trust proxy', () => true)
+}
 
 const limit = rateLimit({
     ...bot,
@@ -43,6 +45,6 @@ route.get("/", (_, res) => {
 
 app.use("/", route)
 
-app.listen(80, () => {
+app.listen(3000, () => {
     console.log("Server running at http://localhost:80");
 });

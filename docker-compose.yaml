@@ -21,6 +21,7 @@ services:
       APPFLAG: dev{flag}
       APPLIMIT: 2
       APPLIMITTIME: 60
+      USE_PROXY: 1
     networks:
       - internal
 

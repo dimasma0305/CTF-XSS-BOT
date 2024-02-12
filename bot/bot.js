@@ -11,9 +11,13 @@ const CONFIG = {
 
 console.table(CONFIG)
 
+function sleep(s){
+    return new Promise((resolve)=>setTimeout(resolve, s))
+}
+
 const initBrowser = puppeteer.launch({
     executablePath: "/usr/bin/chromium-browser",
-    headless: 'new',
+    headless: true,
     args: [
         '--disable-dev-shm-usage',
         '--no-sandbox',
@@ -41,7 +45,7 @@ module.exports = {
     },
     bot: async (urlToVisit) => {
         const browser = await initBrowser;
-        const context = await browser.createIncognitoBrowserContext()
+        const context = await browser.createBrowserContext()
         try {
             // Goto main page
             const page = await context.newPage();
@@ -59,7 +63,7 @@ module.exports = {
             await page.goto(urlToVisit, {
                 waitUntil: 'networkidle2'
             });
-            await page.waitForTimeout(5000);
+            await sleep(15000);
 
             // Close
             console.log("browser close...")
