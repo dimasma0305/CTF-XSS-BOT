@@ -11,7 +11,13 @@ const CONFIG = {
     APPLIMIT: Number(process.env['APPLIMIT'] || "5"),
     APPEXTENSIONS: (() => {
         const extDir = path.join(__dirname, 'extensions');
-        return fs.readdirSync(extDir).map((e) => path.join(extDir, e)).join(",");
+        const dir = []
+        fs.readdirSync(extDir).forEach(file => {
+            if (fs.lstatSync(path.join(extDir, file)).isDirectory()) {
+                dir.push(path.join(extDir, file))
+            }
+        });
+        return dir.join(',')
     })()
 }
 
@@ -22,9 +28,23 @@ function sleep(s) {
     return new Promise((resolve) => setTimeout(resolve, s))
 }
 
+function getBrowser(){
+    const browserPaths = [
+        "/usr/bin/chromium-browser",
+        "/usr/bin/google-chrome",
+        "/usr/bin/chromium"
+    ]
+    for (const browserPath of browserPaths) {
+        if (fs.existsSync(browserPath)) {
+            return browserPath
+        }
+    }
+    throw new Error("No browser found")
+}
+
 const initBrowser = puppeteer.launch({
-    executablePath: "/usr/bin/chromium-browser",
-    headless: true,
+    executablePath: getBrowser(),
+    headless: false,
     args: [
         '--disable-dev-shm-usage',
         '--no-sandbox',
@@ -37,7 +57,7 @@ const initBrowser = puppeteer.launch({
         '--disable-software-rasterizer',
         '--disable-xss-auditor',
         ...(() => {
-            if (config.APPEXTENSIONS === "") return [];
+            if (CONFIG.APPEXTENSIONS === "") return [];
             return [
                 `--disable-extensions-except=${CONFIG.APPEXTENSIONS}`,
                 `--load-extension=${CONFIG.APPEXTENSIONS}`

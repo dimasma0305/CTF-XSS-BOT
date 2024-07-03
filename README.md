@@ -12,6 +12,7 @@ while utilizing Puppeteer to simulate web browser behavior.
 - **Customize APP Name:** Easily set a custom application name to match your challenge theme.
 - **White List URL By Regex:** Define a regex pattern to whitelist specific URLs for challenge interaction.
 - **Rate Limiting:** Prevent abuse with built-in rate limiting to control participant interactions.
+- **Automated Browser Extension Installation:** Automatically install the browser extension.
 
 ## Usage
 
@@ -44,3 +45,5 @@ while utilizing Puppeteer to simulate web browser behavior.
 
 5. Your `./src` will be hosted at http://localhost/, and the bot can be accessed
    at http://localhost/report. Customize your XSS challenges and empower participants to master web security.
+
+6. If you want to add a browser extension, you can add a extension folder in `./bot/extensions`, the extension will be automatically installed when the bot is started.
