@@ -1,4 +1,6 @@
 const puppeteer = require('puppeteer');
+const fs = require('fs');
+const path = require('path');
 
 const CONFIG = {
     APPNAME: process.env['APPNAME'] || "Admin",
@@ -7,12 +9,17 @@ const CONFIG = {
     APPFLAG: process.env['APPFLAG'] || "dev{flag}",
     APPLIMITTIME: Number(process.env['APPLIMITTIME'] || "60"),
     APPLIMIT: Number(process.env['APPLIMIT'] || "5"),
+    APPEXTENSIONS: (() => {
+        const extDir = path.join(__dirname, 'extensions');
+        return fs.readdirSync(extDir).map((e) => path.join(extDir, e)).join(",");
+    })()
 }
+
 
 console.table(CONFIG)
 
-function sleep(s){
-    return new Promise((resolve)=>setTimeout(resolve, s))
+function sleep(s) {
+    return new Promise((resolve) => setTimeout(resolve, s))
 }
 
 const initBrowser = puppeteer.launch({
@@ -28,7 +35,14 @@ const initBrowser = puppeteer.launch({
         '--disable-translate',
         '--disable-device-discovery-notifications',
         '--disable-software-rasterizer',
-        '--disable-xss-auditor'
+        '--disable-xss-auditor',
+        ...(() => {
+            if (config.APPEXTENSIONS === "") return [];
+            return [
+                `--disable-extensions-except=${CONFIG.APPEXTENSIONS}`,
+                `--load-extension=${CONFIG.APPEXTENSIONS}`
+            ]
+        })()
     ],
     ipDataDir: '/home/bot/data/',
     ignoreHTTPSErrors: true
