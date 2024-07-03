@@ -1,2 +1,2 @@
-/extensions/*
-!/extensions/.gitkeep
+/bot/extensions/*
+!/bot/extensions/.gitkeep
