@@ -46,29 +46,29 @@ function getBrowser() {
  * @type {puppeteer.LaunchOptions}
  **/
 const browserArgs = {
-        executablePath: getBrowser(),
-        headless: false,
-        args: [
-            '--disable-dev-shm-usage',
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-gpu',
-            '--no-gpu',
-            '--disable-default-apps',
-            '--disable-translate',
-            '--disable-device-discovery-notifications',
-            '--disable-software-rasterizer',
-            '--disable-xss-auditor',
-            ...(() => {
-                if (CONFIG.APPEXTENSIONS === "") return [];
-                return [
-                    `--disable-extensions-except=${CONFIG.APPEXTENSIONS}`,
-                    `--load-extension=${CONFIG.APPEXTENSIONS}`
-                ]
-            })(),
-        ],
-        ignoreHTTPSErrors: true
-    }
+    executablePath: getBrowser(),
+    headless: false,
+    args: [
+        '--disable-dev-shm-usage',
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-gpu',
+        '--no-gpu',
+        '--disable-default-apps',
+        '--disable-translate',
+        '--disable-device-discovery-notifications',
+        '--disable-software-rasterizer',
+        '--disable-xss-auditor',
+        ...(() => {
+            if (CONFIG.APPEXTENSIONS === "") return [];
+            return [
+                `--disable-extensions-except=${CONFIG.APPEXTENSIONS}`,
+                `--load-extension=${CONFIG.APPEXTENSIONS}`
+            ]
+        })(),
+    ],
+    ignoreHTTPSErrors: true
+}
 /**
  * @type {puppeteer.Browser}
  */
@@ -121,7 +121,7 @@ module.exports = {
         } finally {
             if (CONFIG.APPEXTENSIONS !== "") {
                 await context.browser().close();
-            }else{
+            } else {
                 await context.close();
             }
         }
