@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  app:
+  proxy:
     image: nginx:latest
     ports:
       - 80:80
@@ -16,14 +16,18 @@ services:
     build: bot
     environment:
       APPNAME: Admin
-      APPURL: http://app/
-      APPURLREGEX: ^http://app/.*$
+      APPURL: http://proxy/
+      APPURLREGEX: ^http(|s)://.*$
       APPFLAG: dev{flag}
       APPLIMIT: 2
       APPLIMITTIME: 60
       USE_PROXY: 1
+      DISPLAY: ${DISPLAY}
     networks:
       - internal
+    # uncoment this if you need to run the bot in GUI mode
+    # volumes:
+      # - /tmp/.X11-unix:/tmp/.X11-unix
 
 networks:
   internal:
