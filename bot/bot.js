@@ -47,7 +47,13 @@ function getBrowser() {
  **/
 const browserArgs = {
     executablePath: getBrowser(),
-    headless: false,
+    headless: (()=>{
+        const is_x11_exists = fs.existsSync('/tmp/.X11-unix');
+        if (process.env['DISPLAY'] !== undefined && is_x11_exists) {
+            return false;
+        }
+        return true;
+    })(),
     args: [
         '--disable-dev-shm-usage',
         '--no-sandbox',
