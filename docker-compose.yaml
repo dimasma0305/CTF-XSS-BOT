@@ -3,6 +3,7 @@ version: '3'
 services:
   proxy:
     image: nginx:latest
+    restart: always
     ports:
       - 80:80
     volumes:
@@ -14,6 +15,7 @@ services:
       - bot
   bot:
     build: bot
+    restart: always
     environment:
       APPNAME: Admin
       APPURL: http://proxy/
