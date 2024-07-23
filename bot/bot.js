@@ -115,7 +115,8 @@ module.exports = {
 
             console.log(`bot visiting ${urlToVisit}`)
             await page.goto(urlToVisit, {
-                waitUntil: 'networkidle2'
+                waitUntil: 'load',
+                timeout: 10*1000
             });
             await sleep(15000);
 
