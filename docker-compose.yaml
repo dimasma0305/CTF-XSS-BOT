@@ -31,8 +31,8 @@ services:
     networks:
       - internal
     # uncoment this if you need to run the bot in GUI mode
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
+    # volumes:
+      # - /tmp/.X11-unix:/tmp/.X11-unix
 
 networks:
   internal:
