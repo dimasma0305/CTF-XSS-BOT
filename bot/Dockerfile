@@ -5,6 +5,7 @@ ENV LANG="C.UTF-8" PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 RUN apk update
 RUN apk add --no-cache zlib-dev udev nss ca-certificates
 RUN apk add --no-cache chromium
+# RUN apk add --no-cache firefox
 RUN adduser -h /home/bot -D -u 10086 bot
 RUN yarn cache clean
 RUN rm -rf /tmp/* /etc/apk/* /var/cache/apk/* /usr/share/man

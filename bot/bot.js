@@ -32,15 +32,18 @@ function getBrowser() {
     const browserPaths = [
         "/usr/bin/chromium-browser",
         "/usr/bin/google-chrome",
-        "/usr/bin/chromium"
-    ]
+        "/usr/bin/chromium",
+        "/usr/bin/firefox",
+        "/usr/local/bin/firefox"
+    ];
     for (const browserPath of browserPaths) {
         if (fs.existsSync(browserPath)) {
-            return browserPath
+            return browserPath;
         }
     }
-    throw new Error("No browser found")
+    throw new Error("No browser found");
 }
+
 
 /**
  * @type {puppeteer.LaunchOptions}
