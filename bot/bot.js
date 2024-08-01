@@ -61,6 +61,20 @@ const browserArgs = {
 /** @type {import('playwright').Browser} */
 let initBrowser = null;
 
+async function getContext(){
+    /** @type {import('playwright').BrowserContext} */
+    let context = null;
+    if (CONFIG.APPEXTENSIONS === "") {
+        if (initBrowser === null) {
+            initBrowser = await (CONFIG.APPBROWSER === 'firefox' ? firefox.launch(browserArgs) : chromium.launch(browserArgs));
+        }
+        context = await initBrowser.newContext();
+    } else {
+        context = await (CONFIG.APPBROWSER === 'firefox' ? firefox.launch({browserArgs}) : chromium.launch(browserArgs)).newContext();
+    }
+    return context
+}
+
 console.log("Bot started...");
 
 module.exports = {
@@ -71,16 +85,7 @@ module.exports = {
         max: CONFIG.APPLIMIT
     },
     bot: async (urlToVisit) => {
-        /** @type {import('playwright').BrowserContext} */
-        let context = null;
-        if (CONFIG.APPEXTENSIONS === "") {
-            if (initBrowser === null) {
-                initBrowser = await (CONFIG.APPBROWSER === 'firefox' ? firefox.launch(browserArgs) : chromium.launch(browserArgs));
-            }
-            context = await initBrowser.newContext();
-        } else {
-            context = await (CONFIG.APPBROWSER === 'firefox' ? firefox.launch({browserArgs}) : chromium.launch(browserArgs)).newContext();
-        }
+        const context = await getContext()
         try {
             const page = await context.newPage();
             await context.addCookies([{
