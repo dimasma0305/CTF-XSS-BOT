@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer');
+const { chromium, firefox, webkit } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
@@ -11,46 +11,25 @@ const CONFIG = {
     APPLIMIT: Number(process.env['APPLIMIT'] || "5"),
     APPEXTENSIONS: (() => {
         const extDir = path.join(__dirname, 'extensions');
-        const dir = []
+        const dir = [];
         fs.readdirSync(extDir).forEach(file => {
             if (fs.lstatSync(path.join(extDir, file)).isDirectory()) {
-                dir.push(path.join(extDir, file))
+                dir.push(path.join(extDir, file));
             }
         });
-        return dir.join(',')
-    })()
-}
+        return dir.join(',');
+    })(),
+    APPBROWSER: process.env['BROWSER'] || 'chromium'
+};
 
-
-console.table(CONFIG)
+console.table(CONFIG);
 
 function sleep(s) {
-    return new Promise((resolve) => setTimeout(resolve, s))
+    return new Promise((resolve) => setTimeout(resolve, s));
 }
 
-function getBrowser() {
-    const browserPaths = [
-        "/usr/bin/chromium-browser",
-        "/usr/bin/google-chrome",
-        "/usr/bin/chromium",
-        "/usr/bin/firefox",
-        "/usr/local/bin/firefox"
-    ];
-    for (const browserPath of browserPaths) {
-        if (fs.existsSync(browserPath)) {
-            return browserPath;
-        }
-    }
-    throw new Error("No browser found");
-}
-
-
-/**
- * @type {puppeteer.LaunchOptions}
- **/
 const browserArgs = {
-    executablePath: getBrowser(),
-    headless: (()=>{
+    headless: (() => {
         const is_x11_exists = fs.existsSync('/tmp/.X11-unix');
         if (process.env['DISPLAY'] !== undefined && is_x11_exists) {
             return false;
@@ -73,15 +52,14 @@ const browserArgs = {
             return [
                 `--disable-extensions-except=${CONFIG.APPEXTENSIONS}`,
                 `--load-extension=${CONFIG.APPEXTENSIONS}`
-            ]
+            ];
         })(),
     ],
     ignoreHTTPSErrors: true
-}
-/**
- * @type {puppeteer.Browser}
- */
-var initBrowser = null;
+};
+
+/** @type {import('playwright').Browser} */
+let initBrowser = null;
 
 console.log("Bot started...");
 
@@ -93,37 +71,33 @@ module.exports = {
         max: CONFIG.APPLIMIT
     },
     bot: async (urlToVisit) => {
-        var context = null;
-        // use the same browser instance for all bots if no extensions are loaded
+        /** @type {import('playwright').BrowserContext} */
+        let context = null;
         if (CONFIG.APPEXTENSIONS === "") {
             if (initBrowser === null) {
-                initBrowser = await puppeteer.launch(browserArgs);
+                initBrowser = await (CONFIG.APPBROWSER === 'firefox' ? firefox.launch(browserArgs) : chromium.launch(browserArgs));
             }
-            context = await initBrowser.createBrowserContext();
-        }
-        // create a new browser instance for each bot if extensions are loaded
-        // this is because puppeteer does not add the extensions to new browser contexts
-        if (CONFIG.APPEXTENSIONS !== "") {
-            context = (await puppeteer.launch(browserArgs)).defaultBrowserContext();
+            context = await initBrowser.newContext();
+        } else {
+            context = await (CONFIG.APPBROWSER === 'firefox' ? firefox.launch({browserArgs}) : chromium.launch(browserArgs)).newContext();
         }
         try {
             const page = await context.newPage();
-
-            await page.setCookie({
+            await context.addCookies([{
                 name: "flag",
                 httpOnly: false,
                 value: CONFIG.APPFLAG,
                 url: CONFIG.APPURL
-            })
+            }]);
 
-            console.log(`bot visiting ${urlToVisit}`)
+            console.log(`bot visiting ${urlToVisit}`);
             await page.goto(urlToVisit, {
                 waitUntil: 'load',
-                timeout: 10*1000
+                timeout: 10 * 1000
             });
             await sleep(15000);
 
-            console.log("browser close...")
+            console.log("browser close...");
             return true;
         } catch (e) {
             console.error(e);
@@ -136,4 +110,4 @@ module.exports = {
             }
         }
     }
-}
+};

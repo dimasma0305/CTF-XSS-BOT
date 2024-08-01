@@ -11,6 +11,6 @@
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-rate-limit": "^6.7.0",
-    "puppeteer": "^22.0.0"
+    "playwright": "^1.45.3"
   }
 }
