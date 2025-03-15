@@ -7,7 +7,7 @@ const CONFIG = {
     APPURL: process.env['APPURL'] || "http://172.17.0.1",
     APPURLREGEX: process.env['APPURLREGEX'] || "^.*$",
     APPFLAG: process.env['APPFLAG'] || "dev{flag}",
-    APPLIMITTIME: Number(process.env['APPLIMITTIME'] || "60"),
+    APPLIMITTIME: Number(process.env['APPLIMITTIME'] || "60000"),
     APPLIMIT: Number(process.env['APPLIMIT'] || "5"),
     APPEXTENSIONS: (() => {
         const extDir = path.join(__dirname, 'extensions');
@@ -38,8 +38,6 @@ const browserArgs = {
     })(),
     args: [
         '--disable-dev-shm-usage',
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
         '--disable-gpu',
         '--no-gpu',
         '--disable-default-apps',
@@ -81,8 +79,8 @@ module.exports = {
     name: CONFIG.APPNAME,
     urlRegex: CONFIG.APPURLREGEX,
     rateLimit: {
-        windowS: CONFIG.APPLIMITTIME,
-        max: CONFIG.APPLIMIT
+        windowMs: CONFIG.APPLIMITTIME,
+        limit: CONFIG.APPLIMIT
     },
     bot: async (urlToVisit) => {
         const context = await getContext()

@@ -13,7 +13,7 @@ if (process.env.USE_PROXY){
 }
 
 const limit = rateLimit({
-    ...bot,
+    ...bot.rateLimit,
     handler: ((req, res, _next) => {
         const timeRemaining = Math.ceil((req.rateLimit.resetTime - Date.now()) / 1000)
         res.status(429).json({
@@ -29,7 +29,7 @@ route.post("/", limit, async (req, res) => {
         return res.status(400).send({ error: "Url is missing." });
     }
     if (!RegExp(bot.urlRegex).test(url)) {
-        return res.status(422).send({ error: "URL din't match this regex format " + bot.urlRegex })
+        return res.status(422).send({ error: "URL didn't match this regex format " + bot.urlRegex })
     }
     if (await bot.bot(url)) {
         return res.send({ success: "Admin successfully visited the URL." });
