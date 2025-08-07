@@ -79,8 +79,8 @@ module.exports = {
     name: CONFIG.APPNAME,
     urlRegex: CONFIG.APPURLREGEX,
     rateLimit: {
-        windowMs: CONFIG.APPLIMITTIME,
-        limit: CONFIG.APPLIMIT
+        windowMs: Number(CONFIG.APPLIMITTIME) * 1000,
+        limit: Number(CONFIG.APPLIMIT)
     },
     bot: async (urlToVisit) => {
         const context = await getContext()
